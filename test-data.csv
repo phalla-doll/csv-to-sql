@@ -1,0 +1,6 @@
+id,name,email,age,created_at,is_active,balance
+1,John Doe,john@example.com,30,2024-01-15,true,1500.50
+2,Jane Smith,jane@example.com,25,2024-01-16,false,2300.75
+3,Bob Wilson,bob@example.com,35,2024-01-17,true,890.25
+4,Alice Brown,alice@example.com,28,2024-01-18,true,3200.00
+5,Charlie Davis,charlie@example.com,42,2024-01-19,false,1100.80
