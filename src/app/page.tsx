@@ -1,65 +1,206 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import {
+  ArrowLeft,
+  ArrowRight,
+  Database,
+  FileSpreadsheet,
+  RotateCcw,
+  Settings2,
+} from "lucide-react";
+import { AppSidebar } from "@/components/app-sidebar";
+import { ColumnEditor } from "@/components/column-editor";
+import { CSVUploader } from "@/components/csv-uploader";
+import { DataPreview } from "@/components/data-preview";
+import { SQLOutput } from "@/components/sql-output";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { useCSVConverter } from "@/hooks/use-csv-converter";
+
+export default function Page() {
+  const {
+    state,
+    isLoading,
+    handleFileUpload,
+    updateTableName,
+    updateColumnSchema,
+    generateSQLFromData,
+    goToStep,
+    reset,
+  } = useCSVConverter();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+          <h1 className="text-lg font-semibold">CSV to SQL Converter</h1>
+        </header>
+        <div className="flex flex-1 flex-col p-4 md:p-6">
+          <div className="mx-auto w-full max-w-5xl space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">
+                  Convert CSV to PostgreSQL
+                </h2>
+                <p className="text-muted-foreground">
+                  Upload your CSV file and generate SQL schemas for
+                  PostgreSQL/Supabase
+                </p>
+              </div>
+              {state.step !== "upload" && (
+                <Button variant="outline" size="sm" onClick={reset}>
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Start Over
+                </Button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Badge
+                variant={state.step === "upload" ? "default" : "secondary"}
+                className="gap-1"
+              >
+                <FileSpreadsheet className="h-3 w-3" />
+                1. Upload
+              </Badge>
+              <div className="h-px flex-1 bg-border" />
+              <Badge
+                variant={state.step === "configure" ? "default" : "secondary"}
+                className="gap-1"
+              >
+                <Settings2 className="h-3 w-3" />
+                2. Configure
+              </Badge>
+              <div className="h-px flex-1 bg-border" />
+              <Badge
+                variant={state.step === "generate" ? "default" : "secondary"}
+                className="gap-1"
+              >
+                <Database className="h-3 w-3" />
+                3. Generate
+              </Badge>
+            </div>
+
+            {state.error && (
+              <Card className="border-destructive">
+                <CardContent className="pt-4">
+                  <p className="text-destructive">{state.error}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {state.step === "upload" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upload CSV File</CardTitle>
+                  <CardDescription>
+                    Drag and drop or click to upload your CSV file
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CSVUploader
+                    onFileUpload={handleFileUpload}
+                    isLoading={isLoading}
+                  />
+                </CardContent>
+              </Card>
+            )}
+
+            {state.step === "configure" && state.parsedData && (
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Data Preview</CardTitle>
+                    <CardDescription>
+                      Preview of your CSV data ({state.parsedData.rowCount}{" "}
+                      rows, {state.parsedData.columnSchemas.length} columns)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <DataPreview parsedData={state.parsedData} />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Configure Schema</CardTitle>
+                    <CardDescription>
+                      Customize table name, column names, and data types
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ColumnEditor
+                      columns={state.parsedData.columnSchemas}
+                      tableName={state.tableName}
+                      onTableNameChange={updateTableName}
+                      onColumnChange={updateColumnSchema}
+                    />
+                  </CardContent>
+                </Card>
+
+                <div className="flex justify-between">
+                  <Button variant="outline" onClick={() => goToStep("upload")}>
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back
+                  </Button>
+                  <Button onClick={generateSQLFromData}>
+                    Generate SQL
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {state.step === "generate" &&
+              state.generatedSQL &&
+              state.parsedData && (
+                <div className="space-y-6">
+                  <SQLOutput
+                    generatedSQL={state.generatedSQL}
+                    tableName={state.tableName}
+                  />
+
+                  <div className="flex justify-between">
+                    <Button
+                      variant="outline"
+                      onClick={() => goToStep("configure")}
+                    >
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Back to Configure
+                    </Button>
+                    <Button onClick={reset}>
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Convert Another File
+                    </Button>
+                  </div>
+                </div>
+              )}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
