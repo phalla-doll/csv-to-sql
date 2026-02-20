@@ -1,7 +1,9 @@
 "use client";
 
 import { Database, FileSpreadsheet, Home, Moon, Sun } from "lucide-react";
-import * as React from "react";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { type ComponentProps, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -29,18 +31,16 @@ const navItems = [
   },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light");
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+  const { setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  React.useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    document.documentElement.classList.toggle("dark");
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -53,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <div className="flex items-center gap-2">
-                <Database className="size-5 text-primary" />
+                <Database className="size-5 text-primary" aria-hidden="true" />
                 <span className="text-base font-semibold">CSV to SQL</span>
               </div>
             </SidebarMenuButton>
@@ -67,10 +67,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={item.isActive}>
-                    <div className="flex items-center gap-2">
-                      <item.icon className="size-4" />
+                    <Link href={item.url} className="flex items-center gap-2">
+                      <item.icon className="size-4" aria-hidden="true" />
                       <span>{item.title}</span>
-                    </div>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -86,18 +86,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               size="sm"
               onClick={toggleTheme}
               className="w-full justify-start gap-2"
+              aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
             >
-              {theme === "light" ? (
-                <>
-                  <Moon className="size-4" />
-                  <span>Dark Mode</span>
-                </>
-              ) : (
-                <>
-                  <Sun className="size-4" />
-                  <span>Light Mode</span>
-                </>
-              )}
+              {mounted &&
+                (resolvedTheme === "dark" ? (
+                  <>
+                    <Sun className="size-4" aria-hidden="true" />
+                    <span>Light Mode</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="size-4" aria-hidden="true" />
+                    <span>Dark Mode</span>
+                  </>
+                ))}
             </Button>
           </SidebarMenuItem>
         </SidebarMenu>

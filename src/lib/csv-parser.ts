@@ -75,10 +75,6 @@ export function escapeSQLValue(value: string, type: DataType): string {
     case "bigint":
     case "float":
       return value.replace(/[^0-9.-]/g, "") || "NULL";
-    case "date":
-    case "timestamp":
-    case "uuid":
-    case "text":
     default:
       return `'${value.replace(/'/g, "''")}'`;
   }

@@ -1,12 +1,7 @@
 import { useCallback, useState } from "react";
 import { parseCSV } from "@/lib/csv-parser";
 import { generateSQL } from "@/lib/sql-generator";
-import type {
-  ColumnSchema,
-  ConversionState,
-  GeneratedSQL,
-  ParsedCSV,
-} from "@/types";
+import type { ColumnSchema, ConversionState } from "@/types";
 
 const initialState: ConversionState = {
   step: "upload",

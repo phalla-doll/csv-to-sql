@@ -1,6 +1,6 @@
-import type { ColumnSchema, DataType, GeneratedSQL, ParsedCSV } from "@/types";
+import type { ColumnSchema, GeneratedSQL, ParsedCSV } from "@/types";
 import { POSTGRES_TYPE_MAP } from "@/types";
-import { escapeSQLValue, sanitizeColumnName } from "./csv-parser";
+import { escapeSQLValue } from "./csv-parser";
 
 const RESERVED_WORDS = new Set([
   "user",
@@ -77,7 +77,7 @@ function sanitizeTableName(name: string): string {
     .replace(/^_|_$/g, "");
 
   if (/^\d/.test(sanitized)) {
-    sanitized = "table_" + sanitized;
+    sanitized = `table_${sanitized}`;
   }
 
   return sanitized || "converted_table";
@@ -110,7 +110,7 @@ function generateCreateTable(
     }
 
     columnDefs.push(
-      `  ${columnName} ${postgresType}${constraints.length > 0 ? " " + constraints.join(" ") : ""}`,
+      `  ${columnName} ${postgresType}${constraints.length > 0 ? ` ${constraints.join(" ")}` : ""}`,
     );
   }
 

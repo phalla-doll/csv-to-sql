@@ -57,10 +57,12 @@ export function ColumnEditor({
         <Label htmlFor="table-name">Table Name</Label>
         <Input
           id="table-name"
+          name="table-name"
           value={tableName}
           onChange={(e) => onTableNameChange(e.target.value)}
-          placeholder="Enter table name"
+          placeholder="Enter table name…"
           className="max-w-sm"
+          autoComplete="off"
         />
       </div>
 
@@ -103,16 +105,24 @@ export function ColumnEditor({
                         variant="ghost"
                         className="h-8 w-8"
                         onClick={saveEdit}
+                        aria-label="Save column name"
                       >
-                        <Check className="h-4 w-4 text-green-600" />
+                        <Check
+                          className="h-4 w-4 text-green-600"
+                          aria-hidden="true"
+                        />
                       </Button>
                       <Button
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8"
                         onClick={cancelEdit}
+                        aria-label="Cancel editing"
                       >
-                        <X className="h-4 w-4 text-red-600" />
+                        <X
+                          className="h-4 w-4 text-red-600"
+                          aria-hidden="true"
+                        />
                       </Button>
                     </div>
                   ) : (
@@ -125,8 +135,9 @@ export function ColumnEditor({
                         variant="ghost"
                         className="h-6 w-6"
                         onClick={() => startEditing(index, col.mappedName)}
+                        aria-label={`Edit ${col.mappedName} column name`}
                       >
-                        <Edit2 className="h-3 w-3" />
+                        <Edit2 className="h-3 w-3" aria-hidden="true" />
                       </Button>
                     </div>
                   )}

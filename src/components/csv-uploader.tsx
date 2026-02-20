@@ -84,8 +84,9 @@ export function CSVUploader({ onFileUpload, isLoading }: CSVUploaderProps) {
               type="button"
               onClick={clearFile}
               className="ml-4 p-1 hover:bg-muted rounded-full"
+              aria-label="Clear file"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         ) : (
@@ -95,6 +96,7 @@ export function CSVUploader({ onFileUpload, isLoading }: CSVUploaderProps) {
                 "h-12 w-12 mb-4",
                 isDragging ? "text-primary" : "text-muted-foreground",
               )}
+              aria-hidden="true"
             />
             <p className="text-lg font-medium mb-1">
               {isDragging
@@ -108,16 +110,18 @@ export function CSVUploader({ onFileUpload, isLoading }: CSVUploaderProps) {
               <input
                 type="file"
                 accept=".csv"
+                name="csv-file"
                 className="hidden"
                 onChange={handleFileSelect}
                 disabled={isLoading}
+                aria-label="Upload CSV file"
               />
               <span className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
                 Browse Files
               </span>
             </label>
             <p className="text-xs text-muted-foreground mt-4">
-              Supports CSV files up to 10MB
+              Supports CSV files up to 10&nbsp;MB
             </p>
           </>
         )}

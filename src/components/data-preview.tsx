@@ -54,10 +54,11 @@ export function DataPreview({ parsedData, maxRows = 100 }: DataPreviewProps) {
               size="sm"
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
+              aria-label="Previous page"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <span className="text-sm">
+            <span className="text-sm" aria-live="polite">
               Page {page + 1} of {totalPages}
             </span>
             <Button
@@ -65,8 +66,9 @@ export function DataPreview({ parsedData, maxRows = 100 }: DataPreviewProps) {
               size="sm"
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
+              aria-label="Next page"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
         )}

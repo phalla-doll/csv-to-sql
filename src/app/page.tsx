@@ -58,7 +58,7 @@ export default function Page() {
           <Separator orientation="vertical" className="mr-2 h-4" />
           <h1 className="text-lg font-semibold">CSV to SQL Converter</h1>
         </header>
-        <div className="flex flex-1 flex-col p-4 md:p-6">
+        <div className="flex flex-1 flex-col p-4 md:p-6" id="main-content">
           <div className="mx-auto w-full max-w-5xl space-y-6">
             <div className="flex items-center justify-between">
               <div>
