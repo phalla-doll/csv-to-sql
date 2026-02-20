@@ -86,7 +86,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
               size="sm"
               onClick={toggleTheme}
               className="w-full justify-start gap-2"
-              aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+              aria-label={`Switch to ${mounted && resolvedTheme === "dark" ? "light" : "dark"} mode`}
             >
               {mounted &&
                 (resolvedTheme === "dark" ? (

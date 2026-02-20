@@ -185,9 +185,9 @@ export function ColumnEditor({
                 </div>
                 <div className="col-span-2">
                   <div className="flex flex-wrap gap-1">
-                    {col.sampleValues.slice(0, 2).map((val) => (
+                    {col.sampleValues.slice(0, 2).map((val, i) => (
                       <Badge
-                        key={val}
+                        key={`${i}-${val}`}
                         variant="secondary"
                         className="text-xs font-normal truncate max-w-[80px]"
                       >
